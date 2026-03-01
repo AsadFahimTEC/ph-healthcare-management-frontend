@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { loginAction } from "@/app/(commonLayout)/(authRouteGroup)/login/_action";
+import AppField from "@/components/shared/form/AppField";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ILoginPayload } from "@/zod/auth.validation";
+import { ILoginPayload, loginZodSchema } from "@/zod/auth.validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -13,7 +15,7 @@ const LoginForm = () => {
     const queryClient = useQueryClient();
 
     const [serverError, setServerError] = useState<string | null>(null);
-    // const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const { mutateAsync , isPending} = useMutation({
         mutationFn : (payload : ILoginPayload) => loginAction(payload),
@@ -61,7 +63,7 @@ const LoginForm = () => {
           }}
           className="space-y-4"
         >
-          {/* <form.Field
+          <form.Field
             name="email"
             validators={{ onChange: loginZodSchema.shape.email }}
           >
@@ -73,9 +75,9 @@ const LoginForm = () => {
                 placeholder="Enter your email"
               />
             )}
-          </form.Field> */}
+          </form.Field>
 
-          {/* <form.Field
+          <form.Field
             name="password"
             validators={{ onChange: loginZodSchema.shape.password }}
           >
@@ -104,7 +106,7 @@ const LoginForm = () => {
                 }
               />
             )}
-          </form.Field> */}
+          </form.Field>
 
           {/* <div className="text-right mt-2">
             <Link
