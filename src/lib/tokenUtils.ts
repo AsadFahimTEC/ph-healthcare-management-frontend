@@ -23,7 +23,7 @@ const getTokenSecondsRemaining =  (token: string): number => {
         console.error("Error decoding token:", error);
         return 0;
     }
-} 
+}
 
 export const setTokenInCookies = async (
     name : string,

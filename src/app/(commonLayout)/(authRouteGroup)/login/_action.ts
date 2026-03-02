@@ -1,3 +1,4 @@
+"use server"
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { httpClient } from "@/lib/axios/httpClient";
 import { setTokenInCookies } from "@/lib/tokenUtils";
