@@ -1,3 +1,4 @@
+"use client"
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { loginAction } from "@/app/(commonLayout)/(authRouteGroup)/login/_action";
 import AppField from "@/components/shared/form/AppField";
@@ -12,36 +13,36 @@ import Link from "next/link";
 import { useState } from "react";
 
 const LoginForm = () => {
-    const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-    const [serverError, setServerError] = useState<string | null>(null);
-    const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const { mutateAsync , isPending} = useMutation({
-        mutationFn : (payload : ILoginPayload) => loginAction(payload),
-    })
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (payload: ILoginPayload) => loginAction(payload),
+  })
 
-    const form = useForm({
-        defaultValues : {
-            email : "",
-            password : "",
-        },
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
 
-        onSubmit : async ({value}) => {
-            setServerError(null);
-            try {
-                const result = await mutateAsync(value) as any;
+    onSubmit: async ({ value }) => {
+      setServerError(null);
+      try {
+        const result = await mutateAsync(value) as any;
 
-                if(!result.success ){
-                    setServerError(result.message || "Login failed");
-                    return ;
-                }
-            } catch (error : any) {
-                console.log(`Login failed: ${error.message}`);
-                setServerError(`Login failed: ${error.message}`);
-            }
+        if (!result.success) {
+          setServerError(result.message || "Login failed");
+          return;
         }
-    })
+      } catch (error: any) {
+        console.log(`Login failed: ${error.message}`);
+        setServerError(`Login failed: ${error.message}`);
+      }
+    }
+  })
   return (
     <Card className="w-full max-w-md mx-auto shadow-md">
       <CardHeader className="text-center">
@@ -92,7 +93,7 @@ const LoginForm = () => {
                 className="cursor-pointer"
                 append={
                   <Button
-                  type="button"
+                    type="button"
                     onClick={() => setShowPassword((value) => !value)}
                     variant="ghost"
                     size="icon"
@@ -108,22 +109,22 @@ const LoginForm = () => {
             )}
           </form.Field>
 
-          {/* <div className="text-right mt-2">
+          <div className="text-right mt-2">
             <Link
               href="/forgot-password"
               className="text-sm text-primary hover:underline underline-offset-4"
             >
               Forgot password?
             </Link>
-          </div> */}
+          </div>
 
-          {/* {serverError && (
+          {serverError && (
             <Alert variant={"destructive"}>
               <AlertDescription>{serverError}</AlertDescription>
             </Alert>
-          )} */}
+          )}
 
-          {/* <form.Subscribe
+          <form.Subscribe
             selector={(s) => [s.canSubmit, s.isSubmitting] as const}
           >
             {([canSubmit, isSubmitting]) => (
@@ -132,9 +133,9 @@ const LoginForm = () => {
               </AppSubmitButton>
             )}
           </form.Subscribe>
-        </form> */}
+        </form>
 
-        {/* <div className="relative my-6">
+        <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
@@ -143,12 +144,12 @@ const LoginForm = () => {
               Or continue with
             </span>
           </div>
-        </div> */}
+        </div>
 
-        {/* <Button variant="outline" className="w-full" onClick={() => {
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            //TODO redirect path after login in frontend
-            window.location.href = `${baseUrl}/auth/login/google`;
+        <Button variant="outline" className="w-full" onClick={() => {
+          const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+          //TODO redirect path after login in frontend
+          window.location.href = `${baseUrl}/auth/login/google`;
         }}>
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
             <path
@@ -169,21 +170,21 @@ const LoginForm = () => {
             />
           </svg>
           Sign in with Google
-        </Button> */}
-        </form> 
+        </Button>
+
       </CardContent>
 
-      {/* <CardFooter className="justify-center border-t pt-4">
+      <CardFooter className="justify-center border-t pt-4">
         <p className="text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
-            <Link
-                href="/register"
-                className="text-primary font-medium hover:underline underline-offset-4"
-            >
-                Sign Up for an account
-            </Link>
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-primary font-medium hover:underline underline-offset-4"
+          >
+            Sign Up for an account
+          </Link>
         </p>
-      </CardFooter> */}
+      </CardFooter>
     </Card>
   );
 }
