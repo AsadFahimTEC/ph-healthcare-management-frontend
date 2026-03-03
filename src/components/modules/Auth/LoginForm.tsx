@@ -13,7 +13,11 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const LoginForm = () => {
+interface LoginFormProps {
+    redirectPath ?: string;
+}
+
+const LoginForm = ({ redirectPath }: LoginFormProps) => {
   // const queryClient = useQueryClient();
 
   const [serverError, setServerError] = useState<string | null>(null);

@@ -7,7 +7,7 @@ import { ILoginResponse } from "@/types/auth.types";
 import { ILoginPayload, loginZodSchema } from "@/zod/auth.validation";
 import { redirect } from "next/navigation";
 
-export const loginAction = async (payload : ILoginPayload ) : Promise<ILoginResponse | ApiErrorResponse> =>{
+export const loginAction = async (payload : ILoginPayload, redirectPath ?: string ) : Promise<ILoginResponse | ApiErrorResponse> =>{
     const parsedPayload = loginZodSchema.safeParse(payload);
 
     if(!parsedPayload.success){
