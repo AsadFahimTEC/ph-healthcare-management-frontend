@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtUtils } from "./lib/jwtUtils";
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from "./lib/authUtils";
-import { getNewTokensWithRefreshToken } from "./services/auth.service";
+import { getNewTokensWithRefreshToken, getUserInfo } from "./services/auth.service";
 import { isTokenExpiringSoon } from "./lib/tokenUtils";
 
 async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean> {
@@ -84,32 +84,32 @@ export async function proxy (request : NextRequest) {
        }
 
        // Rule - 2 : User is trying to access reset password page
-    //    if(pathname === "/reset-password"){
+       if(pathname === "/reset-password"){
 
-    //     const email = request.nextUrl.searchParams.get("email");
+        const email = request.nextUrl.searchParams.get("email");
 
-    //         // case - 1 user has needPasswordChange true
-    //         //no need for case 1 if need password change is handled from change-password page
-    //         if(accessToken && email){
-    //             const userInfo = await getUserInfo();
+            // case - 1 user has needPasswordChange true
+            //no need for case 1 if need password change is handled from change-password page
+            if(accessToken && email){
+                const userInfo = await getUserInfo();
 
-    //             if(userInfo.needPasswordChange){
-    //                 return NextResponse.next();
-    //             }else{
-    //                 return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
-    //             }
-    //         }
+                if(userInfo.needPasswordChange){
+                    return NextResponse.next();
+                }else{
+                    return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
+                }
+            }
 
-    //         // Case-2 user coming from forgot password
+            // Case-2 user coming from forgot password
 
-    //         if(email){
-    //             return NextResponse.next();
-    //         }
+            if(email){
+                return NextResponse.next();
+            }
 
-    //         const loginUrl = new URL("/login", request.url);
-    //         loginUrl.searchParams.set("redirect", pathname);
-    //         return NextResponse.redirect(loginUrl);
-    //    }
+            const loginUrl = new URL("/login", request.url);
+            loginUrl.searchParams.set("redirect", pathname);
+            return NextResponse.redirect(loginUrl);
+       }
 
        // Rule-3 User trying to access Public route -> allow
        if(routerOwner === null){
