@@ -1,5 +1,6 @@
 import { NavSection } from "@/types/dashboard.types";
 import { UserInfo } from "@/types/user.types";
+import { useState } from "react";
 
 interface DashboardNavbarProps{
     userInfo: UserInfo;
@@ -8,6 +9,7 @@ interface DashboardNavbarProps{
 }
 
 const DashboardNavbarContent = ({dashboardHome, navItems, userInfo}: DashboardNavbarProps) => {
+    const [isOpen, setIsOpen] = useState(false);
     return (
         <div>
             {/* Mobile Menu Toggle Button And Menu */}
@@ -19,7 +21,7 @@ const DashboardNavbarContent = ({dashboardHome, navItems, userInfo}: DashboardNa
             {/* Notification */}
 
             {/* User DropDown */}
-            
+
         </div>
     );
 };
