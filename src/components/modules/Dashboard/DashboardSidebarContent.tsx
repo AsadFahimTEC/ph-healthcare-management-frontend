@@ -1,6 +1,8 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { NavSection } from "@/types/dashboard.types";
 import { UserInfo } from "@/types/user.types";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 
 interface DashboardSidebarContentProps {
@@ -13,7 +15,7 @@ interface DashboardSidebarContentProps {
 
 
 const DashboardSidebarContent = ({dashboardHome, navItems, userInfo} : DashboardSidebarContentProps) => {
-    // const pathname = usePathname()
+    const pathname = usePathname()
   return (
     <div className="hidden md:flex h-full w-64 flex-col border-r bg-card overflow-y-auto">
       {/* Logo / Brand */}
@@ -24,7 +26,7 @@ const DashboardSidebarContent = ({dashboardHome, navItems, userInfo} : Dashboard
       </div>
 
       {/* Navigation Area */}
-      {/* <ScrollArea className="flex-1 px-3 py-4">
+      <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-6">
           {navItems.map((section, sectionId) => (
             <div key={sectionId}>
@@ -35,10 +37,10 @@ const DashboardSidebarContent = ({dashboardHome, navItems, userInfo} : Dashboard
               )}
 
               <div className="space-y-1">
-                {section.items.map((item, id) => {
+                {/* {section.items.map((item, id) => { */}
                   const isActive = pathname === item.href;
-                  // Icon Mapper Function
-                  const Icon = getIconComponent(item.icon);
+                  {/* // Icon Mapper Function */}
+                  {/* const Icon = getIconComponent(item.icon);
 
                   return (
                     <Link
@@ -55,16 +57,16 @@ const DashboardSidebarContent = ({dashboardHome, navItems, userInfo} : Dashboard
                       <span>{item.title}</span>
                     </Link>
                   );
-                })}
+                })} */}
               </div>
 
-              {sectionId < navItems.length - 1 && (
+              {/* {sectionId < navItems.length - 1 && (
                 <Separator className="my-4" />
-              )}
+              )} */}
             </div>
           ))}
         </nav>
-      </ScrollArea> */}
+      </ScrollArea>
 
       {/* User Info At Bottom */}
       <div className="border-t px-3 py-4">
