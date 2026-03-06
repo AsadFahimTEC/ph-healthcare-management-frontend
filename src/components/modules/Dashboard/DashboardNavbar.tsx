@@ -2,6 +2,7 @@ import { getDefaultDashboardRoute } from "@/lib/authUtils";
 import { getNavItemsByRole } from "@/lib/axios/navItems";
 import { getUserInfo } from "@/services/auth.service";
 import { NavSection } from "@/types/dashboard.types";
+import DashboardNavbarContent from "./DashboardNavbarContent";
 
 
 const DashboardNavbar = async () => {
@@ -10,9 +11,7 @@ const DashboardNavbar = async () => {
 
     const dashboardHome = getDefaultDashboardRoute(userInfo.role)
     return (
-        <div>
-            DashboardNavbar
-        </div>
+        <DashboardNavbarContent userInfo={userInfo} navItems={navItems} dashboardHome={dashboardHome}></DashboardNavbarContent>
     );
 };
 
