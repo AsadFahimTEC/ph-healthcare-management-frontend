@@ -2,6 +2,7 @@ import { getDefaultDashboardRoute } from "@/lib/authUtils";
 import { getNavItemsByRole } from "@/lib/axios/navItems";
 import { getUserInfo } from "@/services/auth.service";
 import { NavSection } from "@/types/dashboard.types";
+import DashboardSidebarContent from "./DashboardSidebarContent";
 
 
 const DashboardSidebar = async () => {
@@ -10,10 +11,8 @@ const DashboardSidebar = async () => {
 
     const dashboardHome = getDefaultDashboardRoute(userInfo.role)
     return (
-        <div>
-            DashboardSidebar
-        </div>
-    );
+        <DashboardSidebarContent userInfo={userInfo} navItems={navItems} dashboardHome={dashboardHome} />
+    )
 };
 
 export default DashboardSidebar;
