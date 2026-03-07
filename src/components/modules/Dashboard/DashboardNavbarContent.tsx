@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavSection } from "@/types/dashboard.types";
 import { UserInfo } from "@/types/user.types";
 import { Menu, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";
 import { Input } from "@/components/ui/input";
 import NotificationDropdown from "./NotificationDropdown";
@@ -18,10 +18,25 @@ interface DashboardNavbarProps {
 
 const DashboardNavbarContent = ({ dashboardHome, navItems, userInfo }: DashboardNavbarProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkSmallerScreen = () => {
+            setIsMobile(window.innerWidth < 768);
+        }
+
+        checkSmallerScreen();
+        window.addEventListener("resize", checkSmallerScreen);
+
+        return () => {
+            window.removeEventListener("resize", checkSmallerScreen);
+        };
+    }, []);
+
     return (
         <div className="flex items-center gap-4 w-full px-4 py-3 border-b bg-background">
             {/* Mobile Menu Toggle Button And Menu */}
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <Sheet open={isOpen && isMobile} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild className="md:hidden">
                     <Button variant={"outline"} size={"icon"}>
                         <Menu className="h-5 w-5" />
