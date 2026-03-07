@@ -8,6 +8,7 @@ import { useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";
 import { Input } from "@/components/ui/input";
 import NotificationDropdown from "./NotificationDropdown";
+import UserDropdown from "./UserDropdown";
 
 interface DashboardNavbarProps {
     userInfo: UserInfo;
@@ -47,6 +48,7 @@ const DashboardNavbarContent = ({ dashboardHome, navItems, userInfo }: Dashboard
             <NotificationDropdown></NotificationDropdown>
 
             {/* User DropDown */}
+            <UserDropdown userInfo={userInfo}></UserDropdown>
 
         </div>
     );
