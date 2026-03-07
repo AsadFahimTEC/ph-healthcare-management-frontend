@@ -7,6 +7,7 @@ import { Menu, Search } from "lucide-react";
 import { useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";
 import { Input } from "@/components/ui/input";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface DashboardNavbarProps {
     userInfo: UserInfo;
@@ -43,6 +44,7 @@ const DashboardNavbarContent = ({ dashboardHome, navItems, userInfo }: Dashboard
             {/* Right Side Actions */}
 
             {/* Notification */}
+            <NotificationDropdown></NotificationDropdown>
 
             {/* User DropDown */}
 

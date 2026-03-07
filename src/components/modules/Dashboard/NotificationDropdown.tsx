@@ -103,7 +103,7 @@ const NotificationDropdown = () => {
 
             <DropdownMenuSeparator/>
 
-            {/* <ScrollArea className="h-75">
+            <ScrollArea className="h-75">
                 {
                     MOCK_NOTIFICATIONS.length > 0 ? (
                         MOCK_NOTIFICATIONS.map(notification => (
@@ -142,7 +142,7 @@ const NotificationDropdown = () => {
                         </div>
                     ) 
                 }
-            </ScrollArea> */}
+            </ScrollArea>
 
             <DropdownMenuSeparator/>
 
