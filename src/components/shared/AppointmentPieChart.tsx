@@ -1,10 +1,8 @@
+import { PieChartData } from "@/types/dashboard.types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-interface PieChartData {
-    status: string,
-    count: number
-}
+
 
 interface AppointmentPieChartProps {
     data: PieChartData[]

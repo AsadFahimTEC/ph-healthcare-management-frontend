@@ -1,11 +1,9 @@
 import { format } from "date-fns"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { BarChartData } from "@/types/dashboard.types"
 
-interface BarChartData {
-    month: Date | string,
-    count: number
-}
+
 
 
 interface AppointmentBarChartProps {
