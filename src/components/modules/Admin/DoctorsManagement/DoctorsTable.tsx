@@ -13,12 +13,12 @@ import {
 } from "@tanstack/react-table";
 
 const DoctorsTable = () => {
-    const doctorColumns: ColumnDef<IDoctor>[] = [
-        { accessorKey: "name", header: "Name" },
-        //   { accessorKey: "specialization", header: "Specialization" },
-        { accessorKey: "experience", header: "Experience" },
-        //   { accessorKey: "rating", header: "Rating" },
-    ];
+    // const doctorColumns: ColumnDef<IDoctor>[] = [
+    //     { accessorKey: "name", header: "Name" },
+    //     //   { accessorKey: "specialization", header: "Specialization" },
+    //     { accessorKey: "experience", header: "Experience" },
+    //     //   { accessorKey: "rating", header: "Rating" },
+    // ];
 
     const { data: doctorDataResponse, isLoading } = useQuery({
         queryKey: ["doctors"],
