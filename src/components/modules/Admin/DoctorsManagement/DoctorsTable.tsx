@@ -5,12 +5,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getDoctors } from "@/services/doctor.service";
 import { IDoctor } from "@/types/doctor.types";
 import { useQuery } from "@tanstack/react-query";
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable
-} from "@tanstack/react-table";
+// import {
+//     ColumnDef,
+//     flexRender,
+//     getCoreRowModel,
+//     useReactTable
+// } from "@tanstack/react-table";
+import { doctorColumns } from "./doctorsColumns";
 
 const DoctorsTable = () => {
     // const doctorColumns: ColumnDef<IDoctor>[] = [

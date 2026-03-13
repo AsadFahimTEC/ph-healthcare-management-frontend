@@ -4,11 +4,11 @@ enum Gender {
     OTHER = "OTHER"
 }
 
-// export enum UserStatus {
-//     ACTIVE = "ACTIVE",
-//   BLOCKED = "BLOCKED",
-//   DELETED = "DELETED",
-// }
+export enum UserStatus {
+    ACTIVE = "ACTIVE",
+  BLOCKED = "BLOCKED",
+  DELETED = "DELETED",
+}
 
 
 export interface IDoctor {
@@ -27,9 +27,9 @@ export interface IDoctor {
     designation: string;
     averageRating: number;
     createdAt: Date;
-    // user : {
-    //     status : UserStatus
-    // };
+    user : {
+        status : UserStatus
+    };
     specialties : Array<{
         specialtyId : string;
         doctorId : string;
