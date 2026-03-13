@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 interface DataTableActions<TData> {
@@ -77,62 +78,62 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading } :
       getCoreRowModel: getCoreRowModel(),
     });
     return (
-    //   <div className="relative">
-    //     {isLoading && (
-    //       <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center">
-    //         <div className="flex items-center gap-2">
-    //           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-    //           <span className="text-sm text-muted-foreground">Loading...</span>
-    //         </div>
-    //       </div>
-    //     )}
+      <div className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              <span className="text-sm text-muted-foreground">Loading...</span>
+            </div>
+          </div>
+        )}
 
-    //     {/* // Table */}
-    //     <div className="rounded-lg border">
-    //       <Table>
-    //         <TableHeader>
-    //           {getHeaderGroups().map((hg) => (
-    //             <TableRow key={hg.id}>
-    //               {hg.headers.map((header) => (
-    //                 <TableHead key={header.id}>
-    //                   {flexRender(
-    //                     header.column.columnDef.header,
-    //                     header.getContext(),
-    //                   )}
-    //                 </TableHead>
-    //               ))}
-    //             </TableRow>
-    //           ))}
-    //         </TableHeader>
-    //         <TableBody>
-    //           { 
-    //             getRowModel().rows.length ? (
+        {/* // Table */}
+        <div className="rounded-lg border">
+          <Table>
+            <TableHeader>
+              {getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              { 
+                getRowModel().rows.length ? (
                     
-    //              getRowModel().rows.map((row) => (
-    //             <TableRow key={row.id}>
-    //               {row.getVisibleCells().map((cell) => (
-    //                 <TableCell key={cell.id}>
-    //                   {flexRender(
-    //                     cell.column.columnDef.cell,
-    //                     cell.getContext(),
-    //                   )}
-    //                 </TableCell>
-    //               ))}
-    //             </TableRow>
-    //           ))
-    //           ) : (
+                 getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+              ) : (
 
-    //             <TableRow>
-    //                 <TableCell colSpan={tableColumns.length} className="h-24 text-center">
-    //                     {emptyMessage || "No data available."}
-    //                 </TableCell>
-    //             </TableRow>
-    //           )
-    //             }
-    //         </TableBody>
-    //       </Table>
-    //     </div>
-    //   </div>
+                <TableRow>
+                    <TableCell colSpan={tableColumns.length} className="h-24 text-center">
+                        {emptyMessage || "No data available."}
+                    </TableCell>
+                </TableRow>
+              )
+                }
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     );
 }
 
