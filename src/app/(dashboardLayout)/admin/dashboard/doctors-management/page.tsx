@@ -9,7 +9,6 @@ const DoctorManagementPage = async  ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const queryParamsObjects = await searchParams;
-  console.log(queryParamsObjects);
   /*
   {
   searchTerm: "cardio",
@@ -42,16 +41,21 @@ const DoctorManagementPage = async  ({
     .filter(Boolean)
     .join("&");
 
-  console.log(queryString, "querystring");
 
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["doctors", queryParamsObjects],
-    queryFn: () => getDoctors(queryString),
-    staleTime: 1000 * 60 * 60, // 1 hour
-    gcTime: 1000 * 60 * 60 * 6, // 6 hours
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ["doctors", queryString],
+      queryFn: () => getDoctors(queryString),
+      staleTime: 1000 * 60 * 60, // 1 hour
+      gcTime: 1000 * 60 * 60 * 6, // 6 hours
+    });
+  } catch (error) {
+    // Avoid crashing the entire page if the backend rejects invalid query params.
+    // The client-side component will re-fetch and can handle the error state.
+    console.error("Prefetch doctors failed:", error);
+  }
 
 //   await queryClient.prefetchQuery({
 //     queryKey: ["specialties"],
@@ -61,7 +65,7 @@ const DoctorManagementPage = async  ({
 //   });
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <DoctorsTable queryString={queryString} queryParamsObject={queryParamsObjects}></DoctorsTable>
+            <DoctorsTable />
         </HydrationBoundary>
     );
 };

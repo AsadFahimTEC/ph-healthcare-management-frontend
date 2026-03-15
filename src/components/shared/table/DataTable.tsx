@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+import { ColumnDef, flexRender, getCoreRowModel, SortingState, useReactTable } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 interface DataTableActions<TData> {
@@ -99,15 +99,10 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, so
     data,
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    // manualSorting: !!sorting,
-    // manualPagination: !!pagination,
-    // pageCount: pagination ? Math.max(meta?.totalPages ?? 0, 0) : undefined,
-    // state : {
-    //   ...(sorting ? { sorting : sorting.state } : {}),
-    //   ...(pagination ? { pagination: pagination.state } : {}),
-    // },
+    // When sorting is controlled from the parent (e.g. server-side), we keep sorting state in sync
+    // but do not let React Table sort the rows locally.
+    manualSorting: !!sorting,
+    state: sorting ? { sorting: sorting.state } : undefined,
     onSortingChange: sorting ?
       (updater) => {
         const currentSortingState = sorting.state;
@@ -117,17 +112,6 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, so
         sorting.onSortingChange(nextSortingState);
       }
       : undefined,
-    // onPaginationChange: pagination
-    //   ? (updater) => {
-    //       const currentPaginationState = pagination.state;
-    //       const nextPaginationState =
-    //         typeof updater === "function"
-    //           ? updater(currentPaginationState)
-    //           : updater;
-
-    //       pagination.onPaginationChange(nextPaginationState);
-    //     }
-    //   : undefined,
   });
   return (
     <div className="relative">

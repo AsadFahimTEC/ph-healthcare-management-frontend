@@ -24,6 +24,7 @@ export const doctorColumns: ColumnDef<IDoctor>[] = [
     id: "specialties",
     accessorKey: "specialties",
     header: "Specialties",
+    enableSorting: false,
     cell: ({ row }) => {
       const specialties = row.original.specialties
 
@@ -112,7 +113,7 @@ export const doctorColumns: ColumnDef<IDoctor>[] = [
     },
   },
   {
-    id: "status",
+    id: "user.status",
     accessorKey: "user.status",
     header: "Status",
     cell: ({ row }) => {
