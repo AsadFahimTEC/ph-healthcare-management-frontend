@@ -1,19 +1,12 @@
 "use client";
 
 import DataTable from "@/components/shared/table/DataTable";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getDoctors } from "@/services/doctor.service";
 import { IDoctor } from "@/types/doctor.types";
 import { useQuery } from "@tanstack/react-query";
-// import {
-//     ColumnDef,
-//     flexRender,
-//     getCoreRowModel,
-//     useReactTable
-// } from "@tanstack/react-table";
 import { doctorColumns } from "./doctorsColumns";
 
-const DoctorsTable = () => {
+const DoctorsTable = ({ queryString, queryParamsObject }: { queryString: string; queryParamsObject: { [key: string]: string | string[] | undefined } }) => {
     // const doctorColumns: ColumnDef<IDoctor>[] = [
     //     { accessorKey: "name", header: "Name" },
     //     //   { accessorKey: "specialization", header: "Specialization" },
@@ -22,8 +15,8 @@ const DoctorsTable = () => {
     // ];
 
     const { data: doctorDataResponse, isLoading } = useQuery({
-        queryKey: ["doctors"],
-        queryFn: getDoctors
+        queryKey: ["doctors", queryParamsObject],
+        queryFn: () => getDoctors(queryString)
     });
 
     const { data: doctors } = doctorDataResponse! || [];
