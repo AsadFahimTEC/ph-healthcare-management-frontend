@@ -35,14 +35,14 @@ const getPaginationFromParams = (searchParams: URLSearchParams): PaginationState
   return { pageIndex: page - 1, pageSize: limit };
 };
 
+const getSearchFromParams = (searchParams: URLSearchParams): string => {
+  return searchParams.get("search") || "";
+};
+
 const DoctorsTable = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-
-  const [clientQueryString, setClientQueryString] = useState(() =>
-    searchParams.toString(),
-  );
 
   const [sortingState, setSortingState] = useState<SortingState>(() =>
     getSortingFromParams(searchParams),
@@ -52,10 +52,14 @@ const DoctorsTable = () => {
     getPaginationFromParams(searchParams),
   );
 
+  const [searchValue, setSearchValue] = useState<string>(() =>
+    getSearchFromParams(searchParams),
+  );
+
   useEffect(() => {
-    setClientQueryString(searchParams.toString());
     setSortingState(getSortingFromParams(searchParams));
     setPaginationState(getPaginationFromParams(searchParams));
+    setSearchValue(getSearchFromParams(searchParams));
   }, [searchParams]);
 
   const handleSortingChange = useCallback(
@@ -67,9 +71,8 @@ const DoctorsTable = () => {
         next = nextSorting;
       }
 
-      // Use the last known client query string (including filters) so we
-      // optimistically update the URL without waiting for next navigation.
-      const params = new URLSearchParams(clientQueryString);
+      // Use the current search params to build the new URL
+      const params = new URLSearchParams(searchParams.toString());
 
       if (!next || next.length === 0) {
         params.delete("sortBy");
@@ -81,14 +84,13 @@ const DoctorsTable = () => {
       }
 
       const search = params.toString();
-      setClientQueryString(search);
       router.replace(search ? `${pathname}?${search}` : pathname, {
         scroll: false,
       });
 
       setSortingState(next);
     },
-    [clientQueryString, pathname, router, sortingState],
+    [searchParams, pathname, router, sortingState],
   );
 
   const handlePaginationChange = useCallback(
@@ -100,27 +102,55 @@ const DoctorsTable = () => {
         next = nextPagination;
       }
 
-      // Use the last known client query string (including filters) so we
-      // optimistically update the URL without waiting for next navigation.
-      const params = new URLSearchParams(clientQueryString);
+      // Use the current search params to build the new URL
+      const params = new URLSearchParams(searchParams.toString());
 
       params.set("page", String(next.pageIndex + 1));
       params.set("limit", String(next.pageSize));
 
       const search = params.toString();
-      setClientQueryString(search);
       router.replace(search ? `${pathname}?${search}` : pathname, {
         scroll: false,
       });
 
       setPaginationState(next);
     },
-    [clientQueryString, pathname, router, paginationState],
+    [searchParams, pathname, router, paginationState],
+  );
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      console.log("Search debounced:", value);
+      // Use the current search params to build the new URL
+      const params = new URLSearchParams(searchParams.toString());
+
+      const trimmedValue = value.trim();
+      if (!trimmedValue || trimmedValue.length < 2) {
+        params.delete("search");
+        // Don't reset page when clearing search
+      } else {
+        params.set("search", trimmedValue);
+        // Reset to page 1 when searching
+        params.set("page", "1");
+      }
+
+      const search = params.toString();
+      console.log("Updating URL with search:", search);
+      router.replace(search ? `${pathname}?${search}` : pathname, {
+        scroll: false,
+      });
+
+      setSearchValue(value);
+    },
+    [searchParams, pathname, router],
   );
 
   const { data: doctorDataResponse, isLoading, isFetching } = useQuery({
-    queryKey: ["doctors", clientQueryString],
-    queryFn: () => getDoctors(clientQueryString),
+    queryKey: ["doctors", searchParams.toString()],
+    queryFn: () => {
+      console.log("Fetching doctors with query:", searchParams.toString());
+      return getDoctors(searchParams.toString());
+    },
   });
 
   const doctors = doctorDataResponse?.data ?? [];
@@ -144,6 +174,12 @@ const DoctorsTable = () => {
         columns={doctorColumns}
         isLoading={isLoading || isFetching}
         emptyMessage="No doctors found."
+        search={{
+          initialValue: searchValue,
+          placeholder: "Search doctors (min 2 characters)...",
+          debounceMs: 400,
+          onDebouncedChange: handleSearchChange,
+        }}
         sorting={{ state: sortingState, onSortingChange: handleSortingChange }}
         pagination={{ state: paginationState, onPaginationChange: handlePaginationChange }}
         meta={doctorDataResponse?.meta}

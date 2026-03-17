@@ -5,6 +5,7 @@ import { PaginationMeta } from "@/types/api.types";
 import { ColumnDef, flexRender, getCoreRowModel, PaginationState, SortingState, useReactTable } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from "lucide-react";
 import DataTablePagination from "./DataTablePagination";
+import DataTableSearch from "./DataTableSearch";
 import type { Table as TanstackTable } from "@tanstack/react-table";
 
 interface DataTableActions<TData> {
@@ -27,12 +28,12 @@ interface DataTableProps<TData> {
     state: PaginationState;
     onPaginationChange: (state: PaginationState) => void;
   };
-  // search?: {
-  //   initialValue?: string;
-  //   placeholder?: string;
-  //   debounceMs?: number;
-  //   onDebouncedChange: (value: string) => void;
-  // };
+  search?: {
+    initialValue?: string;
+    placeholder?: string;
+    debounceMs?: number;
+    onDebouncedChange: (value: string) => void;
+  };
   // filters?: {
   //   configs: DataTableFilterConfig[];
   //   values: DataTableFilterValues;
@@ -44,7 +45,7 @@ interface DataTableProps<TData> {
 }
 
 
-const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, sorting, pagination, meta }: DataTableProps<TData>) => {
+const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, sorting, pagination, search, meta }: DataTableProps<TData>) => {
 
 
   const tableColumns: ColumnDef<TData>[] = actions ? [...columns,
@@ -143,30 +144,18 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, so
         </div>
       )}
 
-       {/* {(search || filters) && (
-          <div className="mb-4 flex flex-wrap items-start gap-3">
-            {search && (
-              <DataTableSearch
-                key={search.initialValue ?? ""}
-                initialValue={search.initialValue}
-                placeholder={search.placeholder}
-                debounceMs={search.debounceMs}
-                onDebouncedChange={search.onDebouncedChange}
-                isLoading={isLoading}
-              />
-            )}
-
-            {filters && (
-              <DataTableFilters
-                filters={filters.configs}
-                values={filters.values}
-                onFilterChange={filters.onFilterChange}
-                onClearAll={filters.onClearAll}
-                isLoading={isLoading}
-              />
-            )}
-          </div>
-        )} */}
+       {search && (
+        <div className="mb-4 flex flex-wrap items-start gap-3">
+          <DataTableSearch
+            key={search.initialValue ?? ""}
+            initialValue={search.initialValue}
+            placeholder={search.placeholder}
+            debounceMs={search.debounceMs}
+            onDebouncedChange={search.onDebouncedChange}
+            isLoading={isLoading}
+          />
+        </div>
+       )}
 
       {/* // Table */}
       <div className="rounded-lg border">
