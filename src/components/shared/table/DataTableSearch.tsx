@@ -1,78 +1,70 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Search, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface DataTableSearchProps {
   initialValue?: string;
   placeholder?: string;
   debounceMs?: number;
-  onDebouncedChange: (value: string) => void;
   isLoading?: boolean;
+  onDebouncedChange: (value: string) => void;
 }
 
 const DataTableSearch = ({
   initialValue = "",
   placeholder = "Search...",
   debounceMs = 700,
+  isLoading,
   onDebouncedChange,
-  isLoading = false,
 }: DataTableSearchProps) => {
-  const [searchValue, setSearchValue] = useState<string>(initialValue);
-  const [isDebouncing, setIsDebouncing] = useState<boolean>(false);
+  const [value, setValue] = useState(initialValue);
+  const skipNextDebounceRef = useRef(false);
 
-  // Update internal state when initialValue changes (e.g., from URL)
   useEffect(() => {
-    setSearchValue(initialValue);
-  }, [initialValue]);
+    if (skipNextDebounceRef.current) {
+      skipNextDebounceRef.current = false;
+      return;
+    }
 
-  // Debounce effect for search
-  useEffect(() => {
-    setIsDebouncing(true);
     const timer = setTimeout(() => {
-      console.log("Debounce fired for search:", searchValue);
-      onDebouncedChange(searchValue);
-      setIsDebouncing(false);
-    }, searchValue === "" ? 0 : debounceMs); // Immediate for empty search
+      onDebouncedChange(value.trim());
+    }, debounceMs);
 
     return () => clearTimeout(timer);
-  }, [searchValue, debounceMs, onDebouncedChange]);
+  }, [value, debounceMs, onDebouncedChange]);
 
   const handleClear = () => {
-    setSearchValue("");
+    skipNextDebounceRef.current = true;
+    setValue("");
+    onDebouncedChange("");
   };
 
   return (
-    <div className="relative flex-1 max-w-sm">
+    <div className="relative w-full md:max-w-sm">
+      <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
       <Input
-        type="text"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
         placeholder={placeholder}
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
+        className="h-9 pr-9 pl-9"
         disabled={isLoading}
-        className={`pr-10 ${isDebouncing ? 'border-blue-500' : ''} ${searchValue && searchValue.length < 2 ? 'border-orange-400' : ''}`}
       />
-      {searchValue && searchValue.length < 2 && (
-        <div className="absolute right-12 top-1/2 -translate-y-1/2 text-xs text-orange-600">
-          Min 2 chars
-        </div>
-      )}
-      {searchValue && searchValue.length >= 2 && (
-        <button
+
+      {value.length > 0 && (
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-xs"
+          className="absolute top-1/2 right-1 -translate-y-1/2"
           onClick={handleClear}
-          disabled={isLoading}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
           aria-label="Clear search"
+          disabled={isLoading}
         >
-          <X className="h-4 w-4" />
-        </button>
-      )}
-      {isDebouncing && searchValue && searchValue.length >= 2 && (
-        <div className="absolute right-12 top-1/2 -translate-y-1/2">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
-        </div>
+          <X className="h-3.5 w-3.5" />
+        </Button>
       )}
     </div>
   );
