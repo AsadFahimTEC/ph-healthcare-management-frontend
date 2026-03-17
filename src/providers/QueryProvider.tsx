@@ -47,7 +47,7 @@ export default function QueryProviders({ children }: { children: React.ReactNode
     const queryClient = getQueryClient()
 
     return (
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
             <QueryClientProvider client={queryClient}>
                 <ReactQueryStreamedHydration>
                     {children}
