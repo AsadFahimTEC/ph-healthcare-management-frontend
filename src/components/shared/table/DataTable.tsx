@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ColumnDef, flexRender, getCoreRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+import { PaginationMeta } from "@/types/api.types";
+import { ColumnDef, flexRender, getCoreRowModel, PaginationState, SortingState, useReactTable } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from "lucide-react";
+import DataTablePagination from "./DataTablePagination";
+import type { Table as TanstackTable } from "@tanstack/react-table";
 
 interface DataTableActions<TData> {
   onView?: (data: TData) => void;
@@ -20,10 +23,10 @@ interface DataTableProps<TData> {
     state: SortingState;
     onSortingChange: (state: SortingState) => void;
   };
-  // pagination?: {
-  //   state: PaginationState;
-  //   onPaginationChange: (state: PaginationState) => void;
-  // };
+  pagination?: {
+    state: PaginationState;
+    onPaginationChange: (state: PaginationState) => void;
+  };
   // search?: {
   //   initialValue?: string;
   //   placeholder?: string;
@@ -36,12 +39,12 @@ interface DataTableProps<TData> {
   //   onFilterChange: (filterId: string, value: DataTableFilterValue | undefined) => void;
   //   onClearAll?: () => void;
   // };
-  // meta?: PaginationMeta;
-  // sorting, pagination, search, filters, meta
+  meta?: PaginationMeta;
+ 
 }
 
 
-const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, sorting, }: DataTableProps<TData>) => {
+const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, sorting, pagination, meta }: DataTableProps<TData>) => {
 
 
   const tableColumns: ColumnDef<TData>[] = actions ? [...columns,
@@ -95,14 +98,19 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, so
   }
   ] : columns;
 
-  const { getHeaderGroups, getRowModel } = useReactTable({
+  const table = useReactTable({
     data,
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     // When sorting is controlled from the parent (e.g. server-side), we keep sorting state in sync
     // but do not let React Table sort the rows locally.
     manualSorting: !!sorting,
-    state: sorting ? { sorting: sorting.state } : undefined,
+    manualPagination: !!pagination,
+    pageCount: meta ? meta.totalPages : -1,
+    state: {
+      ...(sorting ? { sorting: sorting.state } : {}),
+      ...(pagination ? { pagination: pagination.state } : {}),
+    },
     onSortingChange: sorting ?
       (updater) => {
         const currentSortingState = sorting.state;
@@ -112,7 +120,18 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, so
         sorting.onSortingChange(nextSortingState);
       }
       : undefined,
+    onPaginationChange: pagination ?
+      (updater) => {
+        const currentPaginationState = pagination.state;
+
+        const nextPaginationState = typeof updater === "function" ? updater(currentPaginationState) : updater;
+
+        pagination.onPaginationChange(nextPaginationState);
+      }
+      : undefined,
   });
+
+  const { getHeaderGroups, getRowModel } = table;
   return (
     <div className="relative">
       {isLoading && (
@@ -216,6 +235,15 @@ const DataTable = <TData,>({ data, columns, actions, emptyMessage, isLoading, so
           </TableBody>
         </Table>
       </div>
+
+      {pagination && meta && (
+        <DataTablePagination
+          table={table as TanstackTable<TData>}
+          totalRows={meta.total}
+          totalPages={meta.totalPages}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 }

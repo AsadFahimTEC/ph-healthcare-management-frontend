@@ -2,12 +2,22 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { SortingState } from "@tanstack/react-table";
+import type { SortingState, PaginationState } from "@tanstack/react-table";
 import DataTable from "@/components/shared/table/DataTable";
 import { getDoctors } from "@/services/doctor.service";
 import { IDoctor } from "@/types/doctor.types";
 import { useQuery } from "@tanstack/react-query";
 import { doctorColumns } from "./doctorsColumns";
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 10;
+// const SPECIALTIES_FILTER_KEY = "specialties.specialty.title";
+// const APPOINTMENT_FEE_FILTER_KEY = "appointmentFee";
+// const DOCTOR_FILTER_DEFINITIONS = [
+//   serverManagedFilter.single("gender"),
+//   serverManagedFilter.multi(SPECIALTIES_FILTER_KEY),
+//   serverManagedFilter.range(APPOINTMENT_FEE_FILTER_KEY),
+// ];
 
 const getSortingFromParams = (searchParams: URLSearchParams) => {
   const sortBy = searchParams.get("sortBy");
@@ -16,6 +26,13 @@ const getSortingFromParams = (searchParams: URLSearchParams) => {
   if (!sortBy) return [];
 
   return [{ id: sortBy, desc: sortOrder?.toLowerCase() === "desc" }];
+};
+
+const getPaginationFromParams = (searchParams: URLSearchParams): PaginationState => {
+  const page = parseInt(searchParams.get("page") || String(DEFAULT_PAGE));
+  const limit = parseInt(searchParams.get("limit") || String(DEFAULT_LIMIT));
+
+  return { pageIndex: page - 1, pageSize: limit };
 };
 
 const DoctorsTable = () => {
@@ -31,15 +48,24 @@ const DoctorsTable = () => {
     getSortingFromParams(searchParams),
   );
 
+  const [paginationState, setPaginationState] = useState<PaginationState>(() =>
+    getPaginationFromParams(searchParams),
+  );
+
   useEffect(() => {
     setClientQueryString(searchParams.toString());
     setSortingState(getSortingFromParams(searchParams));
+    setPaginationState(getPaginationFromParams(searchParams));
   }, [searchParams]);
 
   const handleSortingChange = useCallback(
     (nextSorting: SortingState) => {
-      const next =
-        typeof nextSorting === "function" ? nextSorting(sortingState) : nextSorting;
+      let next: SortingState;
+      if (typeof nextSorting === "function") {
+        next = (nextSorting as (prev: SortingState) => SortingState)(sortingState);
+      } else {
+        next = nextSorting;
+      }
 
       // Use the last known client query string (including filters) so we
       // optimistically update the URL without waiting for next navigation.
@@ -63,6 +89,33 @@ const DoctorsTable = () => {
       setSortingState(next);
     },
     [clientQueryString, pathname, router, sortingState],
+  );
+
+  const handlePaginationChange = useCallback(
+    (nextPagination: PaginationState) => {
+      let next: PaginationState;
+      if (typeof nextPagination === "function") {
+        next = (nextPagination as (prev: PaginationState) => PaginationState)(paginationState);
+      } else {
+        next = nextPagination;
+      }
+
+      // Use the last known client query string (including filters) so we
+      // optimistically update the URL without waiting for next navigation.
+      const params = new URLSearchParams(clientQueryString);
+
+      params.set("page", String(next.pageIndex + 1));
+      params.set("limit", String(next.pageSize));
+
+      const search = params.toString();
+      setClientQueryString(search);
+      router.replace(search ? `${pathname}?${search}` : pathname, {
+        scroll: false,
+      });
+
+      setPaginationState(next);
+    },
+    [clientQueryString, pathname, router, paginationState],
   );
 
   const { data: doctorDataResponse, isLoading, isFetching } = useQuery({
@@ -92,6 +145,8 @@ const DoctorsTable = () => {
         isLoading={isLoading || isFetching}
         emptyMessage="No doctors found."
         sorting={{ state: sortingState, onSortingChange: handleSortingChange }}
+        pagination={{ state: paginationState, onPaginationChange: handlePaginationChange }}
+        meta={doctorDataResponse?.meta}
         actions={{
           onView: handleView,
           onEdit: handleEdit,

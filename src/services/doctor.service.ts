@@ -19,6 +19,7 @@ export const getDoctors = async (queryString : string) => {
       success: false,
       message: error?.response?.data?.message ?? "Failed to fetch doctors",
       data: [],
+      meta: undefined,
     };
   }
 };
